@@ -1,2 +1,1 @@
-# CS544-Assignment1
-Assignment 1
+# CS544-Projects

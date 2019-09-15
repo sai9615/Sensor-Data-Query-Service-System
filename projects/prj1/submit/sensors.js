@@ -123,7 +123,6 @@ class Sensors {
           mysdarr[k].timestamp === sensorData.timestamp
         ) {
           mysdarr[k].value = sensorData.value;
-          console.log(mysdarr[0].value);
           exsists = 1;
           break;
         }
@@ -163,8 +162,145 @@ class Sensors {
    */
   async findSensorTypes(info) {
     const searchSpecs = validate('findSensorTypes', info);
-    //@TODO
-    return {};
+    var counts = 0;
+    var myobj = { nextIndex: "", data: [] };
+    var search = false;
+    myarray.sort((prop1, prop2) => (prop1.id > prop2.id ? 1 : -1));
+    if (searchSpecs.index != null && searchSpecs.index != 0) {
+                  if (searchSpecs.index > myarray.length - 1 || searchSpecs.index < 0) {
+                    throw [`improper index specified ${searchSpecs.index}`];
+                  }
+                  if (mlindex > 0) {
+                    for (var j = track; j < track + searchSpecs.count; j++) {
+                      myobj.data.push(myarray[j]);
+                      counts++;
+                    }
+                    mlindex = mlindex - counts;
+                    track = myarray.indexOf(myobj.data[counts-1])+1;
+                    if (mlindex > 0) {
+                      myobj.nextIndex = track;
+                    } else {
+                      myobj.nextIndex = mlindex;
+                    }
+                  } else {
+                    for (var j = searchSpecs.index; j < track + searchSpecs.count; j++) {
+                      myobj.data.push(myarray[j]);
+                      counts++;
+                    }
+                    mlindex = mlindex - counts;
+                    track = myarray.indexOf(myobj.data[counts-1])+1;
+                    if (mlindex > 0) {
+                      myobj.nextIndex = track;
+                    } else {
+                      myobj.nextIndex = mlindex;
+                    }
+                  }
+    } else if (searchSpecs.id != null) {
+                for (var l = 0; l < myarray.length; l++) {
+                  if (myarray[l].id === searchSpecs.id) {
+                    myobj.data.push(myarray[l]);
+                    search = true;
+                    counts++;
+                  }
+                }
+                if (search == false) {
+                  throw [`id not found: ${searchSpecs.id}`];
+                }
+                mlindex = mlindex - counts;
+                track = myarray.indexOf(myobj.data[counts-1])+1;
+                if (mlindex > 0) {
+                  myobj.nextIndex = track;
+                } else {
+                  myobj.nextIndex = mlindex;
+                }
+    } else if (searchSpecs.manufacturer != null) {
+              for (var l = 0; l < myarray.length; l++) {
+                if (myarray[l].manufacturer === searchSpecs.manufacturer) {
+                  myobj.data.push(myarray[l]);
+                  search = true;
+                  counts++;
+                }
+              }
+              if (search == false) {
+                throw [`manufacturer not found: ${searchSpecs.manufacturer}`];
+              }
+              mlindex = mlindex - counts;
+              track = myarray.indexOf(myobj.data[counts-1])+1;
+              if (mlindex > 0) {
+                myobj.nextIndex = track;
+              } else {
+                myobj.nextIndex = mlindex;
+              }
+    } else if (searchSpecs.quantity != null) {
+              for (var l = 0; l < myarray.length; l++) {
+                if (myarray[l].quantity === searchSpecs.quantity) {
+                  myobj.data.push(myarray[l]);
+                  counts++;
+                  search = true;
+                }
+              }
+              if (search == false) {
+                throw [`quantity not found: ${searchSpecs.quantity}`];
+              }
+              mlindex = mlindex - counts;
+              track = myarray.indexOf(myobj.data[counts-1])+1;
+              if (mlindex > 0) {
+                myobj.nextIndex = track;
+              } else {
+                myobj.nextIndex = mlindex;
+              }
+    } else if (searchSpecs.unit != null) {
+              for (var l = 0; l < myarray.length; l++) {
+                if (myarray[l].unit === searchSpecs.unit) {
+                  myobj.data.push(myarray[l]);
+                  search = true;
+                  counts++;
+                }
+              }
+              if (search == false) {
+                throw [`unit not found: ${searchSpecs.unit}`];
+              }
+              mlindex = mlindex - counts;
+              track = myarray.indexOf(myobj.data[counts-1])+1;
+              if (mlindex > 0) {
+                myobj.nextIndex = track;
+              } else {
+                myobj.nextIndex = mlindex;
+              }
+    } else if (searchSpecs.modelNumber != null) {
+              for (var l = 0; l < myarray.length; l++) {
+                if (myarray[l].modelNumber === searchSpecs.modelNumber) {
+                  myobj.data.push(myarray[l]);
+                  search =true;
+                  counts++;
+                }
+              }
+              if (search == false) {
+                throw [`modelNumber not found: ${searchSpecs.modelNumber}`];
+              }
+              mlindex = mlindex - counts;
+              track = myarray.indexOf(myobj.data[counts-1])+1;
+              if (mlindex > 0) {
+                myobj.nextIndex = track;
+              } else {
+                myobj.nextIndex = mlindex;
+              }
+    } else {
+              for (var j = 0; j < searchSpecs.count; j++) {
+                myobj.data.push(myarray[j]);
+                counts++;
+              }
+            // console.log("mlindex is " + mlindex + "count is " + counts);
+              mlindex = mlindex - counts;
+            //  console.log("mlindex is " + mlindex);
+              track = myarray.indexOf(myobj.data[counts-1])+1;
+              if (mlindex > 0) {
+                myobj.nextIndex = track;
+              } else {
+                myobj.nextIndex = mlindex;
+              }
+    }
+    return myobj;
   }
   
   /** Subject to validation of search-parameters in info as per
@@ -194,8 +330,151 @@ class Sensors {
    */
   async findSensors(info) {
     const searchSpecs = validate('findSensors', info);
-    //@TODO
-    return {};
+    var counts = 0;
+    var myobj = { nextIndex: "", data: [] };
+    var myobjs = { nextIndex: "", data: [], sensorType:[] };
+    var search = false;
+    var ind=0;
+    mysensarr.sort((prop1, prop2) => (prop1.id > prop2.id ? 1 : -1));
+    if (searchSpecs.id != null) {
+      var l;
+      if(searchSpecs.index != 0){
+        l = searchSpecs.index; 
+      }
+      else {
+        if(track == 0){
+          l=0
+        } else{
+          l= track-1;
+        }
+      }
+      for (l; l < mysensarr.length; l++) {
+        if (mysensarr[l].id === searchSpecs.id) {
+            myobj.data.push(mysensarr[l]);
+            search = true;
+            counts++;
+        }
+        ind++;
+        track++;
+        if(searchSpecs.count !=0 && counts == searchSpecs.count){
+          break;
+        }
+      }
+      if (search == false) {
+        throw [`id not found: ${searchSpecs.id}`];
+      }
+      msindex = msindex - ind++;
+      if (msindex > 0) {
+        myobj.nextIndex = track-1;
+      } else {
+        myobj.nextIndex = msindex;
+      }
+} else if (searchSpecs.model != null) {
+      var l;
+      if(searchSpecs.index != 0){
+        l = searchSpecs.index; 
+      }
+      else {
+          if(track == 0){
+            l=0
+          } else{
+            l= track-1;
+          }
+      }
+      for (l; l < mysensarr.length; l++) {
+        if (mysensarr[l].model === searchSpecs.model) {
+          if(searchSpecs.doDetail){
+            myobjs.data.push(mysensarr[l]);  
+          } else {
+            myobj.data.push(mysensarr[l]);
+          }
+          search = true;
+          counts++;
+        }
+        ind++;
+        track++;
+        if(searchSpecs.count !=0 && counts == searchSpecs.count){
+          break;
+        }
+      }
+      if (search == false) {
+        throw [`model not found: ${searchSpecs.model}`];
+      }
+      msindex = msindex - ind;
+      if(!searchSpecs.doDetail){
+      if (msindex > 0) {
+        myobj.nextIndex = track-1;
+      } else {
+        myobj.nextIndex = msindex;
+      }
+    }else{
+      for(var a=0; a<myarray.length; a++ ){
+        for(var b=0; b<myobjs.data.length; b++ ){
+          if(myarray[a].id == myobjs.data[b].model){
+            myobjs.sensorType = myarray[a];
+          }
+        }
+      } 
+      if (msindex > 0) {
+        myobjs.nextIndex = track-1;
+      } else {
+        myobjs.nextIndex = msindex;
+      }
+}
+} else if (searchSpecs.period != null) {
+      var l;
+      if(searchSpecs.index != 0){
+        l = searchSpecs.index; 
+      }
+      else {
+        if(track == 0){
+          l=0
+        } else{
+          l= track-1;
+        }
+      }
+      for (l; l < mysensarr.length; l++) {
+        if (mysensarr[l].period === searchSpecs.period) {
+          myobj.data.push(mysensarr[l]);
+          counts++;
+          search = true;
+        }
+        ind++;
+        track++;
+        if(searchSpecs.count !=0 && counts == searchSpecs.count){
+          break;
+        }
+    }
+    if (search == false) {
+      throw [`period not found: ${searchSpecs.period}`];
+    }
+    msindex = msindex - ind;
+    if (msindex > 0) {
+      myobj.nextIndex = track-1;
+    } else {
+      myobj.nextIndex = msindex;
+    }
+} else {
+        for (var j = 0; j < searchSpecs.count; j++) {
+          myobj.data.push(mysensarr[j]);
+          counts++;
+        }
+        console.log("mlindex is " + msindex + "count is " + counts);
+        msindex = msindex - counts;
+        console.log("msindex is " + msindex);
+        track = counts;
+      if (msindex > 0) {
+          myobj.nextIndex = track;
+        } else {
+          myobj.nextIndex = msindex;
+        }
+}    
+
+if (searchSpecs.doDetail){
+  return myobjs;  
+} else{
+  return myobj;
+}
   }
   
   /** Subject to validation of search-parameters in info as per
@@ -234,12 +513,92 @@ class Sensors {
    *  All user errors must be thrown as an array of objects.
    */
   async findSensorData(info) {
-    const searchSpecs = validate('findSensorData', info);
-    //@TODO
-    return {};
+    const stat = info.statuses;
+    const searchSpecs = validate("findSensorData", info);
+    var counts = 0;
+    var myobj = {data: [] };
+    var myobjs = {data: [], sensorType:[], sensor:[] };
+    var search = false;
+    mysensarr.sort((prop1, prop2) => (prop1.timestamp < prop2.timestamp ? 1 : -1));
+    if (searchSpecs.timestamp != null && tmstp != null) {
+      let abc = searchSpecs.statuses;
+      let test = abc.values();
+      let test1 = test.next().value;
+      let test2 = test.next().value;
+      console.log(test2);
+      for (var l=0; l < mysdarr.length; l++) {
+        if ((mysdarr[l].sensorId === searchSpecs.sensorId && mysdarr[l].status === test1 && mysdarr[l].timestamp <= searchSpecs.timestamp ) || (mysdarr[l].sensorId === searchSpecs.sensorId && mysdarr[l].status === test2 && mysdarr[l].timestamp <= searchSpecs.timestamp)) {
+          myobj.data.push(mysdarr[l]);
+          counts++;
+          search = true;
+        }
+        if(searchSpecs.count !=0 && counts == searchSpecs.count){
+          break;
+        }
+    }
+    if (search == false) {
+      throw [`sensor not found with timestamp: ${searchSpecs.timestamp}`];
+    }
+   tmstp = myobj.data[counts-1].timestamp;
+  } else if (searchSpecs.statuses != null && info.statuses != null ) {
+    let abc = searchSpecs.statuses;
+    let test = abc.values();
+    let test1 = test.next().value;
+            for (var l=0; l < mysdarr.length; l++) {
+              if (mysdarr[l].sensorId === searchSpecs.sensorId && mysdarr[l].status === test1) {
+                  myobj.data.push(mysdarr[l]);
+                  counts++;
+                  search = true;
+                }
+              if(searchSpecs.count !=0 && counts == searchSpecs.count){
+                break;
+              }
+          }
+          if (search == false) {
+            throw [`sensor with status: ${searchSpecs.sensorId} not found`];
+          }
+          tmstp = myobj.data[counts-1].timestamp;
+          console.log(tmstp);
+  } else if (searchSpecs.sensorId != null) {
+            for (var l=0; l < mysdarr.length; l++) {
+              if (mysdarr[l].sensorId === searchSpecs.sensorId) {
+                if(searchSpecs.doDetail){
+                  myobjs.data.push(mysdarr[l]);  
+                } else {
+                  myobj.data.push(mysdarr[l]);
+                }
+                search = true;
+                counts++;
+              }
+              if(searchSpecs.count !=0 && counts == searchSpecs.count){
+                break;
+              }
+            }
+            if (search == false) {
+              throw [`sensorId not found 3: ${searchSpecs.sensorId}`];
+            }
+            if(searchSpecs.doDetail){
+            for(var a=0; a<mysensarr.length; a++ ){
+              for(var b=0; b<myobjs.data.length; b++ ){
+                if(mysensarr[a].id == myobjs.data[b].sensorId){
+                  myobjs.sensor = mysensarr[a];
+                }
+              }
+            }
+            for(var a=0; a<myarray.length; a++ ){
+                if(myarray[a].id == myobjs.sensor.model){
+                  myobjs.sensorType = myarray[a];
+                }
+              }
+            }
+    }   
+    if(searchSpecs.doDetail){
+          return myobjs;
+            } else{
+            return myobj;
   }
-  
-  
+}
+
 }
 
 function inrange(value, sens, st){
@@ -259,7 +618,7 @@ function inrange(value, sens, st){
      return "ok";
    }
  }
- 
+
 module.exports = Sensors;
 
 //@TODO add auxiliary functions as necessary

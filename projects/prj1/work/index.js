@@ -216,7 +216,15 @@ function getNameValues(defArgs) {
     if (splits.length != 2) {
       throw `bad NAME=VALUE argument '${def}'`;
     }
-    nameValues[splits[0]] = splits[1];
+    const [name, value] = splits;
+    const fields = name.split('.');
+    let p = nameValues;
+    for (let i = 0; i < fields.length - 1; i++) {
+      const f = fields[i];
+      p[f] = p[f] || {};
+      p = p[f];
+    }
+    p[fields.slice(-1)[0]] = value;
   }
   return nameValues;
 }

@@ -1,0 +1,12 @@
+{
+  "name": "submit",
+  "version": "1.0.0",
+  "description": "Name:\t\tSai Milind Tammisetti\r B-Number:\tB00764346\r Email:\t\tstammis1@binghamton.edu",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

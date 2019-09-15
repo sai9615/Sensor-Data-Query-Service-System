@@ -2,15 +2,25 @@
 
 const assert = require('assert');
 
+let myarray = new Array();
+let mysensarr = new Array();
+let mysdarr = new Array();
+var mlindex;
+var msindex;
+var track=0; 
+var tmstp;
+
 class Sensors {
 
   constructor() {
-    //@TODO
+    this.clear();
   }
 
   /** Clear out all data from this object. */
   async clear() {
-    //@TODO
+    myarray.length = 0;
+    mysensarr.length =0;
+    mysdarr.length = 0;
   }
 
   /** Subject to field validation as per FN_INFOS.addSensorType,
@@ -21,7 +31,34 @@ class Sensors {
    */
   async addSensorType(info) {
     const sensorType = validate('addSensorType', info);
-    //@TODO
+    var cnt=0;
+    if (myarray.length == 0) {
+      myarray.push(sensorType);
+      // console.log(myarray[0].id);
+    }
+    for (var len = 0; len < myarray.length; len++) {
+      if (myarray[len].id !== sensorType.id && len + 1 == myarray.length) {
+        myarray.push(sensorType);
+        console.log("hello my id is " + myarray[len + 1].id);
+        cnt++;
+        break;
+      } else if (myarray[len].id === sensorType.id) {
+        myarray[len].manufacturer = sensorType.manufacturer;
+        myarray[len].modelNumber = sensorType.modelNumber;
+        myarray[len].quantity = sensorType.quantity;
+        myarray[len].unit = sensorType.unit;
+        myarray[len].limits[0] = sensorType.limits[0];
+        myarray[len].limits[1] = sensorType.limits[1];
+        break;
+      } else {
+        continue;
+      }
+    }
+    if(mlindex<0){
+      mlindex = mlindex + cnt; 
+    } else {
+      mlindex = myarray.length;  
+    } 
   }
   
   /** Subject to field validation as per FN_INFOS.addSensor, add
@@ -31,8 +68,21 @@ class Sensors {
    *  All user errors must be thrown as an array of objects.
    */
   async addSensor(info) {
-    const sensor = validate('addSensor', info);
-    //@TODO
+    const sensor = validate("addSensor", info);
+    var check = 0;
+    for (var i = 0; i < myarray.length; i++) {
+      if (myarray[i].id === sensor.model) {
+        check = 1;
+        console.log("sensor id is " + sensor.id);
+        break;
+      }
+    }
+    if (check == 1) {
+      mysensarr.push(sensor);
+    } else if (check != 1) {
+      throw [`no model ${sensor.model} sensor`];
+    }
+    msindex = mysensarr.length;
   }
 
   /** Subject to field validation as per FN_INFOS.addSensorData, add
@@ -44,7 +94,50 @@ class Sensors {
    */
   async addSensorData(info) {
     const sensorData = validate('addSensorData', info);
-    //@TODO
+    var check = 0;
+    var st;
+    //we add the first sensor to array and validate it's id later.
+    //All the sensors after the first sensor would be added
+    //after their id is first verified.
+    if (mysdarr.length == 0) {
+      mysdarr.push(sensorData);
+    }
+    for (var j = 0; j < mysensarr.length; j++) {
+      if (mysensarr[j].id === sensorData.sensorId) {
+        for(var k=0; k<myarray.length; k++){
+          if(myarray[k].id == mysensarr[j].model){
+            st = myarray[k].limits;
+            break;
+          } 
+        }
+        sensorData.status = inrange(sensorData.value, mysensarr[j].expected, st);
+        check = 1;
+        break;
+      }
+    }
+    if (check == 1) {
+      var exsists = 0;
+      for (var k = 0; k < mysdarr.length; k++) {
+        if (
+          mysdarr[k].sensorId === sensorData.sensorId &&
+          mysdarr[k].timestamp === sensorData.timestamp
+        ) {
+          mysdarr[k].value = sensorData.value;
+          console.log(mysdarr[0].value);
+          exsists = 1;
+          break;
+        }
+      }
+      if (exsists === 0) {
+        mysdarr.push(sensorData);
+      }
+    } else if (check != 1) {
+      //if the first element is invalid.
+      if (mysdarr.length === 1) {
+        mysdarr.pop;
+      }
+      throw [`no model ${sensorData.sensorId} sensor`];
+    }
   }
 
   /** Subject to validation of search-parameters in info as per
@@ -149,6 +242,24 @@ class Sensors {
   
 }
 
+function inrange(value, sens, st){
+  if (value > sens.max){
+     if(st.min <= value  && value <= st.max ){
+       return "outOfRange";
+     } else {
+       return "error";
+     }
+   } else if(value < sens.min){
+     if(st.min <= value && value <= st.max ){
+       return "outOfRange";
+     } else {
+       return "error";
+     }
+   }  else if(sens.min <= value && value <= sens.max){
+     return "ok";
+   }
+ }
+ 
 module.exports = Sensors;
 
 //@TODO add auxiliary functions as necessary

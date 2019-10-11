@@ -1,0 +1,22 @@
+{
+  "name": "prj2-sol",
+  "version": "1.0.0",
+  "description": "Name:\t\tSai Milind Tammisetti\r B-Number:\tB00764346\r Email:\t\tstammis1@binghamton.edu",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sai9615/i544.git"
+  },
+  "author": "Sai Milind Tammisetti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sai9615/i544/issues"
+  },
+  "homepage": "https://github.com/sai9615/i544#readme",
+  "dependencies": {
+    "mongodb": "^3.3.2"
+  }
+}

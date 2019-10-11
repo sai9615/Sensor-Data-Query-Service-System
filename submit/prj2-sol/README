@@ -2,4 +2,4 @@ Name:		Sai Milind Tammisetti
 B-Number:	B00764346
 Email:		stammis1@binghamton.edu
 
-The deprecation warnings for don't cause any errors so you can ignore them.
+The deprecation warnings for count and update don't cause any errors so you can ignore them.

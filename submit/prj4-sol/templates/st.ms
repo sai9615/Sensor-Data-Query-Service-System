@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+      <title>Sensor Types List</title>
     <h1>Senor Types List</h1>
     <link rel="stylesheet" href="../css/style.css">
   </head>

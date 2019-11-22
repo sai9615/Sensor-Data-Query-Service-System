@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+     <title>Create & Update Sensor</title>
     <h1>Senors List</h1>
     <link rel="stylesheet" href="../css/style.css">
   </head>
